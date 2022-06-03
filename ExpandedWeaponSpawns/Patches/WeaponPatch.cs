@@ -58,12 +58,12 @@ namespace ExpandedWeaponSpawns
 			List<CodeInstruction> instructionList = instructions.ToList();
             FieldInfo curChargeField = typeof(Weapon).GetField("currentCharge");
 
-            for (int i = 0; i < instructionList.Count; i++)
+			for (int i = 0; i < instructionList.Count; i++)
             {
-                if (instructionList[i].LoadsField(curChargeField)) instructionList[i] = CodeInstruction.Call(typeof(Helper), "GetShootCharge");
+				if (instructionList[i].LoadsField(curChargeField)) instructionList[i] = CodeInstruction.Call(typeof(Helper), "GetShootCharge");
             }
 
 			return instructionList.AsEnumerable();
-		}
-	}
+        }
+    }
 }

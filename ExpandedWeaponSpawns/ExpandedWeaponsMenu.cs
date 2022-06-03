@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using UnityEngine;
 using HarmonyLib;
-using System.Reflection;
+using System.IO;
+using BepInEx;
+using SimpleJSON;
 
 namespace ExpandedWeaponSpawns
 {
@@ -13,8 +16,8 @@ namespace ExpandedWeaponSpawns
         public static UnusedWeaponInfo[] UnusedWeapons = new UnusedWeaponInfo[]
         {
             new UnusedWeaponInfo {Index = 8, Rarity = 15, Name = "Shield"},
-            new UnusedWeaponInfo {Index = 9, Rarity = 20, Name = "Fan"},
-            new UnusedWeaponInfo {Index = 11, Rarity = 10, Name = "Ball"}, 
+            new UnusedWeaponInfo {Index = 9, Rarity = 15, Name = "Fan"},
+            new UnusedWeaponInfo {Index = 11, Rarity = 20, Name = "Ball"}, 
             new UnusedWeaponInfo {Index = 13, Rarity = 20, Name = "BowAndArrow"},
             new UnusedWeaponInfo {Index = 15, Rarity = 5, Name = "Lightsaber"},
             new UnusedWeaponInfo {Index = 18, Rarity = 10, Name = "MinigunTiny"},  
@@ -31,6 +34,7 @@ namespace ExpandedWeaponSpawns
         public static KeyCode MenuKey1;
         public static KeyCode MenuKey2;
         public static bool SingleKeyKeybind;
+        public static readonly string WeaponStatesPath = Path.Combine(Application.persistentDataPath, "WeaponStatesData.json");
 
         private readonly MethodInfo _generateRaritiesMethod = AccessTools.Method(typeof(WeaponSelectionHandler), "GenerateWeaponRarityArray");
         private bool _showMenu;
@@ -47,7 +51,8 @@ namespace ExpandedWeaponSpawns
                 if (weapon.IsActive != activeWeaponComparison[i])
                 {
                     activeWeaponComparison[i] = weapon.IsActive;
-                    _generateRaritiesMethod.Invoke(GameManager.Instance.GetComponent<WeaponSelectionHandler>(), null);
+                    GenerateRarities();
+                    SaveWeaponStates();
                     Debug.Log($"Toggled: {weapon.Name} | State: {weapon.IsActive}");
                 }
             }
@@ -77,6 +82,7 @@ namespace ExpandedWeaponSpawns
                     GUILayout.EndVertical();
                     GUILayout.Space(30);
                 }
+
                 if (curItemsInVertGroup == 0) GUILayout.BeginVertical();
 
                 var weapon = UnusedWeapons[i];
@@ -89,6 +95,48 @@ namespace ExpandedWeaponSpawns
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+        }
+
+        void GenerateRarities() => _generateRaritiesMethod.Invoke(GameManager.Instance.GetComponent<WeaponSelectionHandler>(), null);
+
+        public static void LoadWeaponStates()
+        {
+            if (File.Exists(WeaponStatesPath))
+            {
+                JSONArray weaponStatesJSON = JSONNode.Parse(File.ReadAllText(WeaponStatesPath)).AsArray;
+                foreach (var weaponInfoObj in weaponStatesJSON)
+                {
+                    JSONObject weaponInfoJSON = weaponInfoObj.Value.AsObject;
+                    int weaponIndex = weaponInfoJSON[0];
+                    bool weaponState = weaponInfoJSON[2];
+
+                    var weapon = UnusedWeapons.First(weapon => weaponIndex == weapon.Index);
+                    weapon.IsActive = weaponState;
+                }
+            }
+        }
+
+        void SaveWeaponStates()
+        {
+            JSONArray weaponStatesJSON = CreateWeaponStatesJSON();
+            File.WriteAllText(WeaponStatesPath, weaponStatesJSON.ToString());
+        }
+
+        JSONArray CreateWeaponStatesJSON()
+        {
+            JSONObject weaponStatesJSONObj = new();
+            JSONArray weaponStatesJSON = new();
+            foreach (var weaponInfo in UnusedWeapons)
+            {
+                JSONObject weaponInfoJSON = new();
+                weaponInfoJSON.Add("Index", (int)weaponInfo.Index);
+                weaponInfoJSON.Add("Rarity", weaponInfo.Rarity);
+                weaponInfoJSON.Add("IsActive", weaponInfo.IsActive);
+
+                weaponStatesJSON.Add(weaponInfoJSON);
+            }
+
+            return weaponStatesJSON;
         }
     }
 }

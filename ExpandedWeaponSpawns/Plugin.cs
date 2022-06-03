@@ -60,11 +60,11 @@ namespace ExpandedWeaponSpawns
                     "Change the weapon selector menu keybind? (https://docs.unity3d.com/ScriptReference/KeyCode.html)");
 
                 BowHandlerPatches.drawKey = (KeyCode) Enum.Parse(typeof(KeyCode), configBowDrawKeybind.Value);
-                ExpandedWeaponsMenu.MenuKey1 = configMenuKeybind.Value.MainKey; 
-
-                // If menu has only a single key for its keybind then this is true
-                ExpandedWeaponsMenu.SingleKeyKeybind = !configMenuKeybind.Value.Modifiers.Any();
+                ExpandedWeaponsMenu.MenuKey1 = configMenuKeybind.Value.MainKey;
+                ExpandedWeaponsMenu.SingleKeyKeybind = !configMenuKeybind.Value.Modifiers.Any(); // If menu has only a single key for its keybind then this is true
                 if (!ExpandedWeaponsMenu.SingleKeyKeybind) ExpandedWeaponsMenu.MenuKey2 = configMenuKeybind.Value.Modifiers.Last();
+
+                ExpandedWeaponsMenu.LoadWeaponStates();
             }
             catch (Exception ex)
             {
