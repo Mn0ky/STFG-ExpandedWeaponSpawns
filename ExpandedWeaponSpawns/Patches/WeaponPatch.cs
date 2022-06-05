@@ -29,7 +29,18 @@ namespace ExpandedWeaponSpawns
 
 		public static void OnEnableMethodPostfix(Weapon __instance)
         {
-			if (__instance.gameObject.name == "13 Bow") __instance.startBullets = 5;
+			switch (__instance.gameObject.name)
+            {
+				case "13 Bow":
+					__instance.startBullets = 5;
+					break;
+				case "30 MiniHolyGun":
+					__instance.startBullets = 200;
+					break;
+				default:
+					break;
+
+			}
 		}
 
 		public static bool ActuallyShootMethodPrefix(Weapon __instance)
