@@ -39,6 +39,8 @@ namespace ExpandedWeaponSpawns
                 GameManagerPatch.Patch(harmony);
                 Logger.LogInfo("Applying WeaponSelectionHandler patches...");
                 WeaponSelectionHandlerPatches.Patch(harmony);
+                Logger.LogInfo("Applying Fighting patches...");
+                FightingPatch.Patch(harmony);
             }
             catch (Exception ex)
             {

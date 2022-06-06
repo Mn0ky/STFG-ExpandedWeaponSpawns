@@ -39,7 +39,6 @@ namespace ExpandedWeaponSpawns
 					break;
 				default:
 					break;
-
 			}
 		}
 
@@ -63,16 +62,15 @@ namespace ExpandedWeaponSpawns
 			return true;
 		}
 
-		// TODO: Introduce a local variable to load from rather than calling a function everytime shootCharge is needed
+		// TODO: Introduce a local variable to load from rather than calling a function every time shootCharge is needed
 		public static IEnumerable<CodeInstruction> ActuallyShootMethodTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
         {
 			List<CodeInstruction> instructionList = instructions.ToList();
             FieldInfo curChargeField = typeof(Weapon).GetField("currentCharge");
 
 			for (int i = 0; i < instructionList.Count; i++)
-            {
-				if (instructionList[i].LoadsField(curChargeField)) instructionList[i] = CodeInstruction.Call(typeof(Helper), "GetShootCharge");
-            }
+				if (instructionList[i].LoadsField(curChargeField)) 
+					instructionList[i] = CodeInstruction.Call(typeof(Helper), "GetShootCharge");
 
 			return instructionList.AsEnumerable();
         }

@@ -32,7 +32,6 @@ namespace ExpandedWeaponSpawns
         public static KeyCode MenuKey2;
         public static bool SingleKeyKeybind;
         public static readonly string WeaponStatesPath = Path.Combine(Application.persistentDataPath, "WeaponStatesData.json");
-        public static readonly string WeaponRaritiesPath = Path.Combine(Application.persistentDataPath, "WeaponRaritiesData.json");
 
         private readonly MethodInfo _generateRaritiesMethod = AccessTools.Method(typeof(WeaponSelectionHandler), "GenerateWeaponRarityArray");
         private bool _showMenu;
@@ -114,7 +113,9 @@ namespace ExpandedWeaponSpawns
             GUI.skin.label.alignment = TextAnchor.UpperCenter;
             GUI.skin.button.alignment = TextAnchor.UpperCenter;
             if (GUILayout.Button("<color=red>Close</color>")) _showRaritiesMenu = false;
-            GUILayout.Label("Play around with the spawn rates of the special weapons. 20 can be considered the normal value.");
+            GUILayout.Label(
+            "Change the spawn rates of special weapons. While 255 is the true max, 20 is the recommended max, as it's the pistol/sword spawnrate, which is the highest of any weapon."
+            );
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(20);
@@ -126,10 +127,13 @@ namespace ExpandedWeaponSpawns
             {
                 var weapon = UnusedWeapons[i];
                 GUILayout.Label(weapon.Name);
-                weapon.Rarity = int.Parse(GUILayout.TextField(weapon.Rarity.ToString()));
-                if (GUI.changed) valueChanged = true;
 
-                GUILayout.Space(25);
+                GUILayout.BeginHorizontal();
+                weapon.Rarity = byte.Parse(GUILayout.TextField(weapon.Rarity.ToString(), GUILayout.MaxWidth(50)));
+                weapon.Rarity = (int) GUILayout.HorizontalSlider(weapon.Rarity, byte.MinValue, byte.MaxValue);
+                if (GUI.changed) valueChanged = true;
+                GUILayout.EndHorizontal();
+                GUILayout.Space(20);
             }
 
             if (valueChanged)
@@ -168,6 +172,9 @@ namespace ExpandedWeaponSpawns
                 var unusedWeapon = UnusedWeapons.First(weapon => weapon.Index == defaultUnusedWeapon.Index);
                 unusedWeapon.Rarity = defaultUnusedWeapon.Rarity;
             }
+
+            GenerateRarities();
+            SaveWeaponStates();
         }
 
         public static void LoadWeaponStates()
@@ -197,7 +204,6 @@ namespace ExpandedWeaponSpawns
 
         JSONArray CreateWeaponStatesJSON()
         {
-            JSONObject weaponStatesJSONObj = new();
             JSONArray weaponStatesJSON = new();
 
             foreach (var weaponInfo in UnusedWeapons)

@@ -42,11 +42,14 @@ namespace ExpandedWeaponSpawns
             }
             else
             {
-                weaponPickup = weaponPickupObjs[2];
+                weaponPickup = weaponPickupObjs[2]; // Get sword weapon (Gun2) to use as placeholder for weapons whose WeaponDrop is another weapon (ex: holyminigun's is the normal minigun's)
 
                 var weaponPickupComponent = weaponPickup.GetComponent<WeaponPickUp>();
-                weaponPickupComponent.id = weaponID;
+                weaponPickupComponent.id = weaponID; // Switch the weapon id to that of the special weapon (lava whip or holyminigun)
                 weaponPickupComponent.ChangeToPresent();
+
+                // Readd ConstantForce component as ChangeToPresent() destroys it and so later on an error will occur if the player attempts to throw the special weapon
+                if (!weaponPickup.GetComponent<ConstantForce>()) weaponPickup.AddComponent<ConstantForce>();
 
                 __result = weaponPickup;
                 return false;
@@ -56,6 +59,7 @@ namespace ExpandedWeaponSpawns
             return false;
         }
 
+        // TODO: Add specific check for instruction at i + 1
         public static IEnumerable<CodeInstruction> GetRandomWeaponIndexMethodTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
         {
             List<CodeInstruction> instructionList = instructions.ToList();

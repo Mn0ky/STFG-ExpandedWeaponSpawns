@@ -35,7 +35,7 @@ namespace ExpandedWeaponSpawns
 				EP2PSend.k_EP2PSendReliable,
 				0
 			);
-		}
+        }
 
 		public static float GetShootCharge(Weapon instance) => instance.gameObject.GetComponentInChildren<BowData>().ShootCharge;
 

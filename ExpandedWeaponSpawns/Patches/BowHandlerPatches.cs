@@ -38,12 +38,12 @@ namespace ExpandedWeaponSpawns
             {
                 if (Input.GetKey(drawKey) && bow.currentCharge < 2.8f)
                 {
-                    bow.currentCharge += 0.05f;
+                    bow.currentCharge += Time.deltaTime * 5;
                     Helper.SyncCharge(bow.currentCharge);
                 }
                 else if (bow.currentCharge > 0f)
                 {
-                    bow.currentCharge = Mathf.Clamp(bow.currentCharge - 0.1f, 0f, 2.8f);
+                    bow.currentCharge = Mathf.Clamp(bow.currentCharge - (Time.deltaTime * 5), 0f, 2.8f);
                     Helper.SyncCharge(bow.currentCharge);
                 }
             }
