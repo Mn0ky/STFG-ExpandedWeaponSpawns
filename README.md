@@ -32,15 +32,14 @@ Some weapons (the lava whip and holy minigun in particular) do not have a weapon
 While some of the special weapons are still pretty nonfunctional, the plan is to ultimately rework them through successive updates. 
 <ins>**The mod is unable to be used in public lobbies; one must directly join another mod user**</ins>.
 
+## Installation
+
+To install the mod, one can follow the [same instructions](https://github.com/Mn0ky/QOL-Mod/#installation) as found on the QOL-Mod page and apply them here. 
+**In addition to putting the ``ExpandedWeaponSpawns.dll`` into the ``BepInEx\Plugins`` folder, you must [download](https://github.com/Mn0ky/SFTG-SimpleAntiCheat/releases/latest/download/SimpleAntiCheat.dll) and put the ``SimpleAntiCheat.dll`` into the folder as well, 
+<ins>or the mod will not run</ins>**.
 ## Using the Menus
 
 To access the weapon selector menu, which one can use to disable or enable weapons for spawning (like in the normal ingame options), simply use the default keybind of: <kbd>LeftShift</kbd> + <kbd>F3</kbd> (changeable in config).
 ![weapon_selector](https://user-images.githubusercontent.com/67206766/172457637-4535192d-c545-45ab-b213-8e97f9d89106.png)<br/>
 Located at the top of the menu, the ``Edit Rarities`` button opens the rarity editor menu, which, as stated above, allows for decreasing/increasing the spawn chances of special weapons.
 ![rarity_editor](https://user-images.githubusercontent.com/67206766/172458665-ddc7d95a-de7e-439b-ba90-261c8a1ca638.png)
-
-## Installation
-
-To install the mod, one can follow the [same instructions](https://github.com/Mn0ky/QOL-Mod/#installation) as found on the QOL-Mod page and apply them here. 
-**In addition to putting the ``ExpandedWeaponSpawns.dll`` into the ``BepInEx\Plugins`` folder, you must [download](https://github.com/Mn0ky/SFTG-SimpleAntiCheat/releases/latest/download/SimpleAntiCheat.dll) and put the ``SimpleAntiCheat.dll`` into the folder as well, 
-<ins>or the mod will not run</ins>**.
