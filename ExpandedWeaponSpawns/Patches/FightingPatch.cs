@@ -20,8 +20,8 @@ namespace ExpandedWeaponSpawns
         {
             // Readd ConstantForce component as ChangeToPresent() destroys it and so later on an error will occur if the player attempts to throw the special weapon
             var weaponDropObj = ___weapons.transform.GetChild(weaponIndex - 1).GetComponent<Weapon>().weaponDrop;
-            Debug.Log("Wanting to throw: " + weaponDropObj.name);
             if (!weaponDropObj.GetComponent<ConstantForce>()) weaponDropObj.AddComponent<ConstantForce>();
+            
             return true;
         }
     }

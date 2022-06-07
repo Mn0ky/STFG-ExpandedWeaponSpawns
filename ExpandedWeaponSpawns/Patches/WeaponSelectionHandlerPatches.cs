@@ -11,6 +11,8 @@ namespace ExpandedWeaponSpawns
 {
     class WeaponSelectionHandlerPatches
     {
+        
+
         public static void Patch(Harmony harmonyInstance)
         {
             var getWeaponByIndexMethod = AccessTools.Method(typeof(WeaponSelectionHandler), "GetWeaponByIndex");
@@ -42,10 +44,11 @@ namespace ExpandedWeaponSpawns
             }
             else
             {
-                weaponPickup = weaponPickupObjs[2]; // Get sword weapon (Gun2) to use as placeholder for weapons whose WeaponDrop is another weapon (ex: holyminigun's is the normal minigun's)
+                weaponPickup = UnityEngine.Object.Instantiate(weaponPickupObjs[2]); // Get sword weapon (Gun2) to use as placeholder for weapons whose WeaponDrop is another weapon (ex: holyminigun's is the normal minigun's)
 
                 var weaponPickupComponent = weaponPickup.GetComponent<WeaponPickUp>();
                 weaponPickupComponent.id = weaponID; // Switch the weapon id to that of the special weapon (lava whip or holyminigun)
+                Debug.Log("Changing weapon to present!!");
                 weaponPickupComponent.ChangeToPresent();
 
                 // Readd ConstantForce component as ChangeToPresent() destroys it and so later on an error will occur if the player attempts to throw the special weapon
@@ -90,7 +93,7 @@ namespace ExpandedWeaponSpawns
             }
 
             weaponRaritiesArrayInstance.SetValue(weaponRaritiesList);
-        }
+        }   
     }
 }
     

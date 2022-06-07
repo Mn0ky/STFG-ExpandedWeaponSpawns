@@ -38,7 +38,7 @@ namespace ExpandedWeaponSpawns
             {
                 if (Input.GetKey(drawKey) && bow.currentCharge < 2.8f)
                 {
-                    bow.currentCharge += Time.deltaTime * 5;
+                    bow.currentCharge = Mathf.Clamp(bow.currentCharge + (Time.deltaTime * 5), 0f, 2.8f);
                     Helper.SyncCharge(bow.currentCharge);
                 }
                 else if (bow.currentCharge > 0f)

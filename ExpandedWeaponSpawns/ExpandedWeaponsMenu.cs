@@ -7,23 +7,23 @@ using UnityEngine;
 using HarmonyLib;
 using System.IO;
 using SimpleJSON;
-
+    
 namespace ExpandedWeaponSpawns
 {
-    class ExpandedWeaponsMenu : MonoBehaviour
+    public class ExpandedWeaponsMenu : MonoBehaviour
     {
         public static UnusedWeaponInfo[] UnusedWeapons = new UnusedWeaponInfo[]
         {
-            new UnusedWeaponInfo {Index = 8, Rarity = 15, Name = "Shield"},
-            new UnusedWeaponInfo {Index = 9, Rarity = 15, Name = "Fan"},
-            new UnusedWeaponInfo {Index = 11, Rarity = 20, Name = "Ball"},
-            new UnusedWeaponInfo {Index = 13, Rarity = 20, Name = "BowAndArrow"},
-            new UnusedWeaponInfo {Index = 15, Rarity = 5, Name = "Lightsaber"},
-            new UnusedWeaponInfo {Index = 18, Rarity = 10, Name = "MinigunTiny"},
-            new UnusedWeaponInfo {Index = 28, Rarity = 10, Name = "LaserPlanter"},
-            new UnusedWeaponInfo {Index = 29, Rarity = 12, Name = "HolySword"},
-            new UnusedWeaponInfo {Index = 30, Rarity = 15, Name = "GodMinigun"},
-            new UnusedWeaponInfo {Index = 34, Rarity = 10, Name = "LavaWhip"}
+            new (8, 5, "Shield"),
+            new (9, 5, "Fan"),
+            new (11, 8, "Ball"),
+            new (13, 10, "BowAndArrow"),
+            new (15, 10, "Lightsaber"),
+            new (18, 6, "MinigunTiny"),
+            new (28, 8, "LaserPlanter"),
+            new (29, 8, "HolySword"),
+            new (30, 2, "GodMinigun"),
+            new (34, 4, "LavaWhip")
         };
 
         public static readonly int[] specialIndexes = new int[] { 30, 34 };
@@ -36,26 +36,38 @@ namespace ExpandedWeaponSpawns
         private readonly MethodInfo _generateRaritiesMethod = AccessTools.Method(typeof(WeaponSelectionHandler), "GenerateWeaponRarityArray");
         private bool _showMenu;
         private readonly int _windowID = 99;
-        private Rect _menuRect = new(300, 300, 600f, 130f);
+        private Rect _menuRect;
 
         private bool _showRaritiesMenu;
         private readonly int _raritiesWindowID = 98;
-        private static readonly float _raritiesMenuWidth = Screen.currentResolution.width / 3;
-        private static readonly float _raritiesMenuHeight = Screen.currentResolution.height / 3;
-        private Rect _raritiesMenuRect = new((Screen.width - _raritiesMenuWidth) / 2, (Screen.height - _raritiesMenuHeight) / 1000, _raritiesMenuWidth, _raritiesMenuHeight);
+        private Rect _raritiesMenuRect;
+        private const string rarityMenuDescription = "Change the spawn rates of special weapons. "
+                                                     + "While 255 is the true max, 20 is the recommended max, as it's the pistol/sword spawnrate (highest of any weapon). "
+                                                     + "To keep in line with other weapon spawns, try not to go above the lower single digits.";
 
-        void Update()
+        private void Start()
+        {
+            float MenuWidth = 600f;
+            float MenuHeight = 130f;
+            _menuRect = new((Screen.width - MenuWidth) / 2, (Screen.height - MenuHeight) / 2, MenuWidth, MenuHeight);
+
+            float raritiesMenuWidth = Screen.currentResolution.width / 3;
+            float raritiesMenuHeight = Screen.currentResolution.height / 3;
+            _raritiesMenuRect = new((Screen.width - raritiesMenuWidth) / 2, (Screen.height - raritiesMenuHeight) / 1000, raritiesMenuWidth, raritiesMenuHeight);
+        }
+
+        private void Update()
         {
             if (Input.GetKey(MenuKey1) && Input.GetKeyDown(MenuKey2) || Input.GetKeyDown(MenuKey1) && SingleKeyKeybind) _showMenu = !_showMenu;
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (_showMenu) _menuRect = GUILayout.Window(_windowID, _menuRect, WeaponSelectorWindow, "Special Weapons");
             if (_showRaritiesMenu) _raritiesMenuRect = GUILayout.Window(_raritiesWindowID, _raritiesMenuRect, WeaponSpawnChanceWindow, "Special Weapon Spawn Chances");
         }
 
-        void WeaponSelectorWindow(int id)
+        private void WeaponSelectorWindow(int id)
         {
             GUILayout.BeginVertical();
             GUI.skin.button.alignment = TextAnchor.UpperCenter;
@@ -108,14 +120,10 @@ namespace ExpandedWeaponSpawns
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
 
-        void WeaponSpawnChanceWindow(int id)
+        private void WeaponSpawnChanceWindow(int id)
         {
-            GUI.skin.label.alignment = TextAnchor.UpperCenter;
-            GUI.skin.button.alignment = TextAnchor.UpperCenter;
-            if (GUILayout.Button("<color=red>Close</color>")) _showRaritiesMenu = false;
-            GUILayout.Label(
-            "Change the spawn rates of special weapons. While 255 is the true max, 20 is the recommended max, as it's the pistol/sword spawnrate, which is the highest of any weapon."
-            );
+            if (GUILayout.Button("<color=red>Close</color>", GUILayout.MaxWidth(50))) _showRaritiesMenu = false;
+            GUILayout.Label(rarityMenuDescription);
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(20);
@@ -126,7 +134,7 @@ namespace ExpandedWeaponSpawns
             for (int i = 0; i < UnusedWeapons.Length; i++)
             {
                 var weapon = UnusedWeapons[i];
-                GUILayout.Label(weapon.Name);
+                GUILayout.Label("<b>" + weapon.Name + "</b>");
 
                 GUILayout.BeginHorizontal();
                 weapon.Rarity = byte.Parse(GUILayout.TextField(weapon.Rarity.ToString(), GUILayout.MaxWidth(50)));
@@ -142,35 +150,23 @@ namespace ExpandedWeaponSpawns
                 SaveWeaponStates();
             }
 
-            if (GUILayout.Button("Reset defaults")) ResetSpecialWeaponRarityDefaults();
+            if (GUILayout.Button("Reset Defaults", GUILayout.MaxWidth(100))) ResetSpecialWeaponRarityDefaults();
+
+            GUI.skin.label.alignment = TextAnchor.UpperLeft;
+            GUI.skin.button.alignment = TextAnchor.UpperLeft;
 
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
 
-        void GenerateRarities() => _generateRaritiesMethod.Invoke(GameManager.Instance.GetComponent<WeaponSelectionHandler>(), null);
+        private void GenerateRarities() => _generateRaritiesMethod.Invoke(GameManager.Instance.GetComponent<WeaponSelectionHandler>(), null);
 
         // TODO: Eventually try to switch this to simply reading in from a "defaults" JSON
-        void ResetSpecialWeaponRarityDefaults()
+        private void ResetSpecialWeaponRarityDefaults()
         {
-            UnusedWeaponInfo[] unusedWeaponDefaults = new UnusedWeaponInfo[]
+            foreach (var unusedWeapon in UnusedWeapons)
             {
-                new UnusedWeaponInfo {Index = 8, Rarity = 15},
-                new UnusedWeaponInfo {Index = 9, Rarity = 15},
-                new UnusedWeaponInfo {Index = 11, Rarity = 20},
-                new UnusedWeaponInfo {Index = 13, Rarity = 20},
-                new UnusedWeaponInfo {Index = 15, Rarity = 5},
-                new UnusedWeaponInfo {Index = 18, Rarity = 10},
-                new UnusedWeaponInfo {Index = 28, Rarity = 10},
-                new UnusedWeaponInfo {Index = 29, Rarity = 12},
-                new UnusedWeaponInfo {Index = 30, Rarity = 15},
-                new UnusedWeaponInfo {Index = 34, Rarity = 10},
-            };
-
-            foreach (var defaultUnusedWeapon in unusedWeaponDefaults)
-            {
-                var unusedWeapon = UnusedWeapons.First(weapon => weapon.Index == defaultUnusedWeapon.Index);
-                unusedWeapon.Rarity = defaultUnusedWeapon.Rarity;
+                unusedWeapon.Rarity = unusedWeapon.DefaultRarity;
             }
 
             GenerateRarities();
@@ -196,13 +192,14 @@ namespace ExpandedWeaponSpawns
             }
         }
 
-        void SaveWeaponStates()
+        private void SaveWeaponStates()
         {
             JSONArray weaponStatesJSON = CreateWeaponStatesJSON();
             File.WriteAllText(WeaponStatesPath, weaponStatesJSON.ToString());
         }
 
-        JSONArray CreateWeaponStatesJSON()
+        // TODO: Abstract json creation to UnusedWeaponInfo
+        private JSONArray CreateWeaponStatesJSON()
         {
             JSONArray weaponStatesJSON = new();
 

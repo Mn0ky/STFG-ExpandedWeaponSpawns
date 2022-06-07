@@ -32,13 +32,14 @@ namespace ExpandedWeaponSpawns
 			switch (__instance.gameObject.name)
             {
 				case "13 Bow":
+					__instance.currentCharge = 0;
 					__instance.startBullets = 5;
 					break;
 				case "30 MiniHolyGun":
 					__instance.startBullets = 200;
-					break;
-				default:
-					break;
+                    break;
+                default:
+                    break;
 			}
 		}
 
