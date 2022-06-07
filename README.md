@@ -25,7 +25,7 @@
 
 This mod gives the player the ability to have the special/unused/dev weapons (such as the holy sword or mini minigun) to naturally spawn in along with the normal weapons. One can edit the rarities (spawn chances) of said weapons to decrease/increase the chance that they'll spawn. All changes to a weapon's active state and rarity are automatically saved to disk, which means changes are saved and loaded even after closing then reopening the game. 
 
-This mod originally evolved from an experiment which fixed the bow, said fixes now allow the bow to be properly drawn and fired— with the networking to go with it. By default, the bow is able to be drawn back and charged with <kbd>LeftShift</kbd> but this is customizable in the config which can be found at: ``BepInEx\config\monky.plugins.ExpandedWeaponSpawns.cfg``. The arrows have had collision enabled allowing for strategic makeshift platforms to be created and built upon. 
+This mod originally evolved from an experiment which fixed the bow, said fixes now allow the bow to be properly drawn and fired— with the networking to go with it. By default, the bow is able to be drawn back and charged with <kbd>LeftShift</kbd> but this is customizable in the config which can be found at:<br/> ``BepInEx\config\monky.plugins.ExpandedWeaponSpawns.cfg``. The arrows have had collision enabled allowing for strategic makeshift platforms to be created and built upon. 
 
 Some weapons (the lava whip and holy minigun in particular) do not have a weapon drop, this is circumvented in the mod by having them come down as a sword through a present. Once picked up, they'll give their respective weapons. If thrown, they'll come out as a normal minigun (for the holy mini gun) or a normal sword (for the lava whip). 
 
