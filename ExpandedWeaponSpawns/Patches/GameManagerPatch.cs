@@ -16,6 +16,6 @@ namespace ExpandedWeaponSpawns
             harmonyInstance.Patch(startMethod, postfix: startMethodPostfix);
         }
 
-        public static void StartMethodPostfix(GameManager __instance) => __instance.gameObject.AddComponent<ExpandedWeaponsMenu>();
+        public static void StartMethodPostfix(GameManager __instance) => __instance.gameObject.AddComponent<ExpandedWeaponsMenu>();       
     }
 }

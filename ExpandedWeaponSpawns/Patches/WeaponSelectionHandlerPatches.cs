@@ -11,8 +11,6 @@ namespace ExpandedWeaponSpawns
 {
     class WeaponSelectionHandlerPatches
     {
-        
-
         public static void Patch(Harmony harmonyInstance)
         {
             var getWeaponByIndexMethod = AccessTools.Method(typeof(WeaponSelectionHandler), "GetWeaponByIndex");
@@ -93,7 +91,7 @@ namespace ExpandedWeaponSpawns
             }
 
             weaponRaritiesArrayInstance.SetValue(weaponRaritiesList);
-        }   
+        }
     }
 }
     
