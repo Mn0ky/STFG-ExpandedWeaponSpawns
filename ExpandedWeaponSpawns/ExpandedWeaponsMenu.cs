@@ -161,16 +161,20 @@ namespace ExpandedWeaponSpawns
 
         private void GenerateRarities() => _generateRaritiesMethod.Invoke(GameManager.Instance.GetComponent<WeaponSelectionHandler>(), null);
 
-        // TODO: Eventually try to switch this to simply reading in from a "defaults" JSON
         private void ResetSpecialWeaponRarityDefaults()
         {
-            foreach (var unusedWeapon in UnusedWeapons)
-            {
-                unusedWeapon.Rarity = unusedWeapon.DefaultRarity;
-            }
+            foreach (var weapon in UnusedWeapons) weapon.Rarity = weapon.DefaultRarity;
 
             GenerateRarities();
             SaveWeaponStates();
+        }
+
+        private void SaveWeaponStates()
+        {
+            JSONArray weaponStatesJSON = new();
+            foreach (var weaponInfo in UnusedWeapons) weaponStatesJSON.Add(weaponInfo.ToJSON());
+
+            File.WriteAllText(WeaponStatesPath, weaponStatesJSON.ToString());
         }
 
         public static void LoadWeaponStates()
@@ -190,30 +194,6 @@ namespace ExpandedWeaponSpawns
                     weapon.Rarity = weaponRarity;
                 }
             }
-        }
-
-        private void SaveWeaponStates()
-        {
-            JSONArray weaponStatesJSON = CreateWeaponStatesJSON();
-            File.WriteAllText(WeaponStatesPath, weaponStatesJSON.ToString());
-        }
-
-        // TODO: Abstract json creation to UnusedWeaponInfo
-        private JSONArray CreateWeaponStatesJSON()
-        {
-            JSONArray weaponStatesJSON = new();
-
-            foreach (var weaponInfo in UnusedWeapons)
-            {
-                JSONObject weaponInfoJSON = new();
-                weaponInfoJSON.Add("Index", (int)weaponInfo.Index);
-                weaponInfoJSON.Add("Rarity", weaponInfo.Rarity);
-                weaponInfoJSON.Add("IsActive", weaponInfo.IsActive);
-
-                weaponStatesJSON.Add(weaponInfoJSON);
-            }
-
-            return weaponStatesJSON;
         }
     }
 }

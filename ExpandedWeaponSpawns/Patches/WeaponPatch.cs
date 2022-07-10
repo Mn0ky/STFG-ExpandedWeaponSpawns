@@ -25,9 +25,9 @@ namespace ExpandedWeaponSpawns
 			var onEnableMethod = AccessTools.Method(typeof(Weapon), "OnEnable");
 			var onEnableMethodPostfix = new HarmonyMethod(typeof(WeaponPatch).GetMethod(nameof(OnEnableMethodPostfix)));  
 			harmonyInstance.Patch(onEnableMethod, postfix: onEnableMethodPostfix);
-		}
+        }
 
-		public static void OnEnableMethodPostfix(Weapon __instance)
+        public static void OnEnableMethodPostfix(Weapon __instance)
         {
 			switch (__instance.gameObject.name)
             {
@@ -43,7 +43,7 @@ namespace ExpandedWeaponSpawns
 			}
 		}
 
-		public static bool ActuallyShootMethodPrefix(Weapon __instance)
+        public static bool ActuallyShootMethodPrefix(Weapon __instance)
         {
 			if (!__instance.isCharged) return true;
 			
@@ -63,8 +63,8 @@ namespace ExpandedWeaponSpawns
 			return true;
 		}
 
-		// TODO: Introduce a local variable to load from rather than calling a function every time shootCharge is needed
-		public static IEnumerable<CodeInstruction> ActuallyShootMethodTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
+        // TODO: Introduce a local variable to load from rather than calling a function every time shootCharge is needed
+        public static IEnumerable<CodeInstruction> ActuallyShootMethodTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
         {
 			List<CodeInstruction> instructionList = instructions.ToList();
             FieldInfo curChargeField = typeof(Weapon).GetField("currentCharge");

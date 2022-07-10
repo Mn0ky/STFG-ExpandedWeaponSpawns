@@ -13,7 +13,7 @@ namespace ExpandedWeaponSpawns
     {
 		public static void SyncCharge(float curCharge)
 		{
-			SendMessageToAllClients
+            SendMessageToAllClients
 			(
 				BitConverter.GetBytes(curCharge), 
 				MsgTypeExtended.WeaponChargeSync, 
@@ -24,16 +24,16 @@ namespace ExpandedWeaponSpawns
 			);
 		}
 
-		public static void SyncShootCharge(float shootCharge)
+        public static void SyncShootCharge(float shootCharge)
         {
 			SendMessageToAllClients
 			(
-				BitConverter.GetBytes(shootCharge),
-				Helper.MsgTypeExtended.WeaponShootChargeSync,
-				false,
-				SteamUser.GetSteamID().m_SteamID,
-				EP2PSend.k_EP2PSendReliable,
-				0
+                BitConverter.GetBytes(shootCharge),
+                MsgTypeExtended.WeaponShootChargeSync,
+                false,
+                SteamUser.GetSteamID().m_SteamID,
+                EP2PSend.k_EP2PSendReliable,
+                0
 			);
         }
 
@@ -135,10 +135,10 @@ namespace ExpandedWeaponSpawns
 			WorkshopMapsLoaded,
 			StartMatch,
 			ObjectHello,
-			OptionsChanged,	
+			OptionsChanged,
 			KickPlayer,
 			WeaponChargeSync,
 			WeaponShootChargeSync
-		}
+        }
     }
 }

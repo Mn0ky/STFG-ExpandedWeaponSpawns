@@ -73,7 +73,7 @@ namespace ExpandedWeaponSpawns
 					return;
 				}
 			}
-		}
+        }
 
 		public static void OnWeaponShootChargeSyncPacketRecieved(byte[] data, CSteamID steamIdRemote)
 		{

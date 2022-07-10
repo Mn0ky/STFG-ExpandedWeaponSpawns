@@ -65,7 +65,7 @@ namespace ExpandedWeaponSpawns
 			if (c)	__instance.controller = c;
 
 			TargetHolder component = __instance.gameObject.GetComponent<TargetHolder>();
-			if (component && __instance.controller && __instance.hitR) component.Set(__instance.hitR, __instance.controller);
+            if (component && __instance.controller && __instance.hitR) component.Set(__instance.hitR, __instance.controller);
 
             return false;
         }
