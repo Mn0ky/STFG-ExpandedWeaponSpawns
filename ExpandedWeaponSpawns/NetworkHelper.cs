@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using Steamworks;
-using HarmonyLib;
 
 namespace ExpandedWeaponSpawns
 {
-    class Helper
+    class NetworkHelper
     {
 		public static void SyncCharge(float curCharge)
 		{
@@ -37,9 +33,8 @@ namespace ExpandedWeaponSpawns
 			);
         }
 
-		public static float GetShootCharge(Weapon instance) => instance.gameObject.GetComponentInChildren<BowData>().ShootCharge;
-
-		public static void SendMessageToAllClients(byte[] data, MsgTypeExtended type, bool ignoreServer = false, ulong ignoreUserID = 0UL, EP2PSend sendMethod = EP2PSend.k_EP2PSendReliable, int channel = 0)
+        private static void SendMessageToAllClients(byte[] data, MsgTypeExtended type, bool ignoreServer = false,
+	        ulong ignoreUserID = 0UL, EP2PSend sendMethod = EP2PSend.k_EP2PSendReliable, int channel = 0)
 		{
 			List<CSteamID> list = new();
 			ushort num = 0;
@@ -70,15 +65,17 @@ namespace ExpandedWeaponSpawns
 			}
 		}
 
-		public static void SendP2PPacketToUser(CSteamID clientID, byte[] data, MsgTypeExtended messageType, EP2PSend sendMethod = EP2PSend.k_EP2PSendReliable, int channel = 0)
+        private static void SendP2PPacketToUser(CSteamID clientID, byte[] data, MsgTypeExtended messageType, 
+	        EP2PSend sendMethod = EP2PSend.k_EP2PSendReliable, int channel = 0)
 		{
 			byte[] array = WriteMessageBuffer(data, messageType);
 			uint num = (uint)array.Length;
 
-			if (!SteamNetworking.SendP2PPacket(clientID, array, num, sendMethod, channel)) UnityEngine.Debug.Log("FAILED to send package to User: " + clientID.m_SteamID);
+			if (!SteamNetworking.SendP2PPacket(clientID, array, num, sendMethod, channel)) 
+				UnityEngine.Debug.Log("FAILED to send package to User: " + clientID.m_SteamID);
 		}
 
-		public static byte[] WriteMessageBuffer(byte[] data, MsgTypeExtended messageType)
+        private static byte[] WriteMessageBuffer(byte[] data, MsgTypeExtended messageType)
 		{
 			uint serverRealTime = SteamUtils.GetServerRealTime();
 			byte[] array = new byte[data.Length + 4 + 1];
@@ -95,6 +92,9 @@ namespace ExpandedWeaponSpawns
 
 			return array;
 		}
+		
+		public static float GetShootCharge(Weapon instance) 
+			=> instance.gameObject.GetComponentInChildren<BowData>().ShootCharge;
 
 		public enum MsgTypeExtended : byte
         {

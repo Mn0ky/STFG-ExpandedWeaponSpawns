@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using HarmonyLib;
-using UnityEngine;
+﻿using HarmonyLib;
 
-namespace ExpandedWeaponSpawns
+namespace ExpandedWeaponSpawns.Patches
 {
     class GameManagerPatch
     {
@@ -16,6 +11,7 @@ namespace ExpandedWeaponSpawns
             harmonyInstance.Patch(startMethod, postfix: startMethodPostfix);
         }
 
-        public static void StartMethodPostfix(GameManager __instance) => __instance.gameObject.AddComponent<ExpandedWeaponsMenu>();       
+        public static void StartMethodPostfix(GameManager __instance) 
+            => __instance.gameObject.AddComponent<ExpandedWeaponsMenu>();       
     }
 }

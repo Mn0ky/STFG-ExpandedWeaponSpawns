@@ -7,25 +7,21 @@ namespace ExpandedWeaponSpawns
     {
         public UnusedWeaponInfo(byte index, int rarity, string name)
         {
-            _index = index;
-            Rarity = _defaultRarity = rarity;
-            _name = name;
+            Index = index;
+            Rarity = DefaultRarity = rarity;
+            Name = name;
         }
 
-        private readonly byte _index;
-        private readonly int _defaultRarity;
-        private readonly string _name;
-
         // Immutable properties
-        public byte Index { get => _index; }
-        public string Name { get => _name; }
-        public int DefaultRarity { get => _defaultRarity; }
+        public byte Index { get; }
+        public string Name { get; }
+        public int DefaultRarity { get; }
 
         // Mutable properties
         public int Rarity { get; set; }
-        public bool IsActive { get; set; } = false;
+        public bool IsActive { get; set; }
 
-        public JSONObject ToJSON()
+        public JSONObject ToJson()
         {
             JSONObject json = new();
             json.Add("Index", (int)Index);

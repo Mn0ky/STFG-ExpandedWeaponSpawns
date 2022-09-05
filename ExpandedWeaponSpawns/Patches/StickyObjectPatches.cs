@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 
-namespace ExpandedWeaponSpawns
+namespace ExpandedWeaponSpawns.Patches
 {
     class StickyObjectPatches
     {
@@ -24,17 +20,16 @@ namespace ExpandedWeaponSpawns
         public static void StartMethodPostfix(StickyObject __instance)
         {
             // Only modify collider layer immediately for 0 charged arrows as otherwise they'll go out of bounds
-            if (__instance.gameObject.name == "BulletArrow(Clone)")
+            if (__instance.gameObject.name != "BulletArrow(Clone)") return;
+            
+            foreach (var bowData in UnityEngine.Object.FindObjectsOfType<BowData>())
             {
-                foreach (var bowData in UnityEngine.Object.FindObjectsOfType<BowData>())
+                if (bowData.ShootCharge <= 2.05f && bowData.PlayerID == __instance.gameObject.GetComponent<TeamHolder>().team)
                 {
-                    if (bowData.ShootCharge <= 2.05f && bowData.PlayerID == __instance.gameObject.GetComponent<TeamHolder>().team)
-                    {
-                        __instance.gameObject.GetComponentInChildren<BoxCollider>().gameObject.layer = 29;
-                        break;
-                    }
+                    __instance.gameObject.GetComponentInChildren<BoxCollider>().gameObject.layer = 29;
+                    break;
                 }
-            }    
+            }
         }
 
         // TODO: Figure out why original postfix was causing arrow-in-middle-of-screen bug
@@ -49,10 +44,9 @@ namespace ExpandedWeaponSpawns
             {
                 Debug.Log("Readding collider");
                 GameObject origCollider = __instance.gameObject.GetComponentInChildren<BoxCollider>().gameObject;
-                GameObject newCollider = UnityEngine.Object.Instantiate(origCollider);
+                GameObject newCollider = UnityEngine.Object.Instantiate(origCollider, __instance.stickObject, true);
 
                 newCollider.layer = 29;
-                newCollider.transform.SetParent(__instance.stickObject);
 
                 UnityEngine.Object.Destroy(origCollider);
             }

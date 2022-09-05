@@ -1,11 +1,7 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
-namespace ExpandedWeaponSpawns
+namespace ExpandedWeaponSpawns.Patches
 {
     class BowHandlerPatches
     {
@@ -39,12 +35,12 @@ namespace ExpandedWeaponSpawns
                 if (Input.GetKey(drawKey) && bow.currentCharge < 2.8f)
                 {
                     bow.currentCharge = Mathf.Clamp(bow.currentCharge + (Time.deltaTime * 5), 0f, 2.8f);
-                    Helper.SyncCharge(bow.currentCharge);
+                    NetworkHelper.SyncCharge(bow.currentCharge);
                 }
                 else if (bow.currentCharge > 0f)
                 {
                     bow.currentCharge = Mathf.Clamp(bow.currentCharge - (Time.deltaTime * 5), 0f, 2.8f);
-                    Helper.SyncCharge(bow.currentCharge);
+                    NetworkHelper.SyncCharge(bow.currentCharge);
                 }
             }
 

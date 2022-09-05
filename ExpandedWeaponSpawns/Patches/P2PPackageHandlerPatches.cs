@@ -1,34 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using HarmonyLib;
 using Steamworks;
 using UnityEngine;
 
-namespace ExpandedWeaponSpawns
+namespace ExpandedWeaponSpawns.Patches
 {
     class P2PPackageHandlerPatches
     {
         public static void Patch(Harmony harmonyInstance)
         {
             var readMessageBufferMethod = AccessTools.Method(typeof(P2PPackageHandler), "ReadMessageBuffer");
-            var readMessageBufferMethodPrefix = new HarmonyMethod(typeof(P2PPackageHandlerPatches).GetMethod(nameof(ReadMessageBufferMethodPrefix)));  
+            var readMessageBufferMethodPrefix =
+	            new HarmonyMethod(typeof(P2PPackageHandlerPatches).GetMethod(nameof(ReadMessageBufferMethodPrefix)));  
             harmonyInstance.Patch(readMessageBufferMethod, prefix: readMessageBufferMethodPrefix);
         }
 
-        public static bool ReadMessageBufferMethodPrefix(ref byte[] rawData, ref CSteamID SteamIdRemote, P2PPackageHandler __instance)
+        public static bool ReadMessageBufferMethodPrefix(ref byte[] rawData, ref CSteamID SteamIdRemote)
         {
-			using (MemoryStream memoryStream = new MemoryStream(rawData))
+			using (var memoryStream = new MemoryStream(rawData))
 			{
-				using (BinaryReader binaryReader = new BinaryReader(memoryStream))
+				using (var binaryReader = new BinaryReader(memoryStream))
 				{
 					uint lastTimeStamp = MultiplayerManager.LastTimeStamp;
 					uint num = binaryReader.ReadUInt32();
-					Helper.MsgTypeExtended msgType = (Helper.MsgTypeExtended) binaryReader.ReadByte();
+					var msgType = (NetworkHelper.MsgTypeExtended) binaryReader.ReadByte();
 
-					if (!GameManager.Instance.mMultiplayerManager.HasBeenInitializedFromServer && msgType != Helper.MsgTypeExtended.ClientInit && msgType != Helper.MsgTypeExtended.ClientAccepted)
+					if (!GameManager.Instance.mMultiplayerManager.HasBeenInitializedFromServer &&
+					    msgType != NetworkHelper.MsgTypeExtended.ClientInit &&
+					    msgType != NetworkHelper.MsgTypeExtended.ClientAccepted)
 					{
 						Debug.Log("Stopping packet: " + msgType + " Has not been inited by server yet!");
 						return false;
@@ -47,24 +47,24 @@ namespace ExpandedWeaponSpawns
 			}
 		}
 
-		public static bool CheckMessageType(byte[] data, Helper.MsgTypeExtended type, CSteamID steamIdRemote)
+        private static bool CheckMessageType(byte[] data, NetworkHelper.MsgTypeExtended type, CSteamID steamIdRemote)
         {
-			switch (type)
-            {
-				case Helper.MsgTypeExtended.WeaponChargeSync:
-					OnWeaponChargeSyncPacketRecieved(data, steamIdRemote);
-					return true;
-				case Helper.MsgTypeExtended.WeaponShootChargeSync:
-					OnWeaponShootChargeSyncPacketRecieved(data, steamIdRemote);
-					return true;
-				default:
-					return false;
-			}
+	        switch (type)
+	        {
+		        case NetworkHelper.MsgTypeExtended.WeaponChargeSync:
+			        OnWeaponChargeSyncPacketRecieved(data, steamIdRemote);
+			        return true;
+		        case NetworkHelper.MsgTypeExtended.WeaponShootChargeSync:
+			        OnWeaponShootChargeSyncPacketRecieved(data, steamIdRemote);
+			        return true;
+		        default:
+			        return false;
+	        }
         }
 
-		public static void OnWeaponChargeSyncPacketRecieved(byte[] data, CSteamID steamIdRemote)
+        private static void OnWeaponChargeSyncPacketRecieved(byte[] data, CSteamID steamIdRemote)
         {
-			foreach (ConnectedClientData client in GameManager.Instance.mMultiplayerManager.ConnectedClients)
+			foreach (var client in GameManager.Instance.mMultiplayerManager.ConnectedClients)
 			{
 				if (client.ClientID == steamIdRemote)
 				{
@@ -75,14 +75,14 @@ namespace ExpandedWeaponSpawns
 			}
         }
 
-		public static void OnWeaponShootChargeSyncPacketRecieved(byte[] data, CSteamID steamIdRemote)
+        private static void OnWeaponShootChargeSyncPacketRecieved(byte[] data, CSteamID steamIdRemote)
 		{
-			foreach (ConnectedClientData client in GameManager.Instance.mMultiplayerManager.ConnectedClients)
+			foreach (var client in GameManager.Instance.mMultiplayerManager.ConnectedClients)
 			{
 				if (client.ClientID == steamIdRemote)
 				{
 					float num = BitConverter.ToSingle(data, 0);
-					BowData bowInfo = client.PlayerObject.GetComponentInChildren<BowData>();
+					var bowInfo = client.PlayerObject.GetComponentInChildren<BowData>();
 					Debug.Log("SHOOT charge: " + num);
 					bowInfo.ShootCharge = num;
 					return;

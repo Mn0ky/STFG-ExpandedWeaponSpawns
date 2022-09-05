@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Reflection;
-using System.Text;
 using HarmonyLib;
-using Steamworks;
 using UnityEngine;
-using BepInEx;
 
-namespace ExpandedWeaponSpawns
+namespace ExpandedWeaponSpawns.Patches
 {
     class WeaponPatch
     {
@@ -38,9 +33,7 @@ namespace ExpandedWeaponSpawns
 				case "30 MiniHolyGun":
 					__instance.startBullets = 200;
                     break;
-                default:
-                    break;
-			}
+            }
 		}
 
         public static bool ActuallyShootMethodPrefix(Weapon __instance)
@@ -55,7 +48,7 @@ namespace ExpandedWeaponSpawns
 				bowInfo.ShootCharge = __instance.currentCharge;
 				Debug.Log("SENDING SHOOT packet: " + bowInfo.ShootCharge);
 
-				Helper.SyncShootCharge(bowInfo.ShootCharge);	
+				NetworkHelper.SyncShootCharge(bowInfo.ShootCharge);	
 			}
 
 			__instance.currentCharge = 0f;
@@ -64,14 +57,14 @@ namespace ExpandedWeaponSpawns
 		}
 
         // TODO: Introduce a local variable to load from rather than calling a function every time shootCharge is needed
-        public static IEnumerable<CodeInstruction> ActuallyShootMethodTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
+        public static IEnumerable<CodeInstruction> ActuallyShootMethodTranspiler(IEnumerable<CodeInstruction> instructions)
         {
 			List<CodeInstruction> instructionList = instructions.ToList();
             FieldInfo curChargeField = typeof(Weapon).GetField("currentCharge");
 
-			for (int i = 0; i < instructionList.Count; i++)
+			for (var i = 0; i < instructionList.Count; i++)
 				if (instructionList[i].LoadsField(curChargeField)) 
-					instructionList[i] = CodeInstruction.Call(typeof(Helper), "GetShootCharge");
+					instructionList[i] = CodeInstruction.Call(typeof(NetworkHelper), nameof(NetworkHelper.GetShootCharge));
 
 			return instructionList.AsEnumerable();
         }
